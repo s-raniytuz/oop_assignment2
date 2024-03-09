@@ -1,0 +1,107 @@
+﻿@page "/flights"
+
+@code {
+    static List<Flight> flightList = FlightManagement.getFlightList();
+    HashSet<String> departures = FlightManagement.fillDepartures(flightList);
+    HashSet<String> arrivals = FlightManagement.fillArrivals(flightList);
+    HashSet<String> weekdays = new HashSet<string>() { "Any", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+    static SelectedValues selectedValues = new SelectedValues();
+    static List<Flight> searchList = new List<Flight>();
+
+    public static void Search()
+    {
+        searchList.Clear();
+        foreach(Flight flight in flightList)
+        {
+            if ((selectedValues.DepartureAirport == flight.DepartureAirport || selectedValues.DepartureAirport == "Any") && 
+                (selectedValues.ArrivalAirport == flight.ArrivalAirport || selectedValues.ArrivalAirport == "Any") && 
+                (selectedValues.Weekday == flight.DayOfTheWeek || selectedValues.Weekday == "Any"))
+            {
+                searchList.Add(flight);
+            }
+        }
+    }
+
+}
+
+<h2 class="section-heading">Flight finder</h2>
+<section id="search-section">
+    <div class="input-wrapper">
+        <label>From:</label>
+        <select @bind="selectedValues.DepartureAirport" aria-lagel="Default select example">
+            @foreach (string departure in departures)
+            {
+                <option value="@departure">@departure</option>
+            }
+        </select>
+    </div>
+
+    <div class="input-wrapper">
+        <label>To:</label>
+        <select @bind="selectedValues.ArrivalAirport">
+            @foreach (string arrival in arrivals)
+            {
+                <option value="@arrival">@arrival</option>
+            }
+        </select>
+    </div>
+
+    <div class="input-wrapper">
+        <label>Day:</label>
+        <select @bind="selectedValues.Weekday">
+            @foreach (string day in weekdays)
+            {
+                <option value="@day">@day</option>
+            }
+        </select>
+    </div>
+
+    <button class="findButton" @onclick="Search">Find Flights</button>
+</section>
+
+<h2 class="section-heading">Flights</h2>
+@if (searchList.Count() == 0)
+{
+    <p>No flights found</p>
+}
+else {
+
+    @foreach (Flight flight in searchList)
+    {
+        <p>@flight.FlightNumber</p>
+    }
+}
+
+<h2 class="section-heading">Reserve</h2>
+<section id="reserve-section">
+    <div class="input-wrapper">
+        <label>Flight Code:</label>
+        <input type:'text' placeholder="Flight code" />
+    </div>
+    <div class="input-wrapper">
+        <label>Airline:</label>
+        <input type:'text' placeholder="Airline" />
+    </div>
+    <div class="input-wrapper">
+        <label>Day:</label>
+        <input type:'text' placeholder="Day" />
+    </div>
+    <div class="input-wrapper">
+        <label>Time:</label>
+        <input type:'text' placeholder="Time" />
+    </div>
+    <div class="input-wrapper">
+        <label>Cost:</label>
+        <input type:'text' value="0" />
+    </div>
+    <div class="input-wrapper">
+        <label>Name:</label>
+        <input type:'text' placeholder="Name" />
+    </div>
+    <div class="input-wrapper">
+        <label>Citizenship:</label>
+        <input type:'text' placeholder="Citizenship" />
+    </div>
+</section>
+
