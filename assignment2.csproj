@@ -59,13 +59,6 @@
 
     <ItemGroup>
       <None Remove="res\flights.csv" />
-      <None Remove="res\reservations.txt" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="res\reservations.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>

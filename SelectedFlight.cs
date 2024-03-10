@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace assignment2
 {
@@ -35,11 +38,11 @@ namespace assignment2
         public void reserveFlight()
         {
             // this shit is not working idk why
-            string resDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
+            string resDirectory = Path.Combine(AppContext.BaseDirectory, "res");
             string filename = "reservations.txt";
             string filepath = Path.Combine(resDirectory, filename);
             string selectedFlightString = $"{FlightNumber}, {Airline}, {Day}, {Time}, {Name}, {Citizenship}" + Environment.NewLine;
-            File.WriteAllText(filepath, selectedFlightString);
+            File.AppendAllText(filepath, selectedFlightString);
         }
     }
 }
