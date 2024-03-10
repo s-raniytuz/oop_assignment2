@@ -18,13 +18,28 @@ namespace assignment2
 
         public SelectedFlight()
         {
-            FlightNumber = " ";
+            FlightNumber = "";
             Airline = "";
             Day = "";
             Time = "";
             Cost = 0;
             Name = "";
             Citizenship = "";
+        }
+
+        public string getWriteString()
+        {
+            return $"{FlightNumber}, {Airline}, {Day}, {Time}, {Cost.ToString()}, {Name}, {Citizenship}";
+        }
+
+        public void reserveFlight()
+        {
+            // this shit is not working idk why
+            string resDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
+            string filename = "reservations.txt";
+            string filepath = Path.Combine(resDirectory, filename);
+            string selectedFlightString = $"{FlightNumber}, {Airline}, {Day}, {Time}, {Name}, {Citizenship}" + Environment.NewLine;
+            File.WriteAllText(filepath, selectedFlightString);
         }
     }
 }

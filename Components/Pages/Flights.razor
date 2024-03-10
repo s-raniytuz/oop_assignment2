@@ -9,6 +9,8 @@
     static SelectedValues selectedValues = new SelectedValues();
     static List<Flight> searchList = new List<Flight>();
 
+    static string reserveResult = "";
+
     public static void Search()
     {
         searchList.Clear();
@@ -36,12 +38,29 @@
                 selectedFlight.Day = flight.DayOfTheWeek;
                 selectedFlight.Time = flight.Time;
                 selectedFlight.Cost = flight.Cost;
-                selectedFlight.Name = "Name";
-                selectedFlight.Citizenship = "Citizenship";
             }
         }
     }
 
+    public static void Reserve()
+    {
+        if (selectedFlight.FlightNumber != "")
+        {
+            try
+            {
+                selectedFlight.reserveFlight();
+                reserveResult = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
+            }
+            catch
+            {
+                reserveResult = "Error";
+            }
+        }
+        else
+        {
+            reserveResult = "Reserve Error";
+        }
+    }
 }
 
 <h2 class="section-heading">Flight finder</h2>
@@ -111,6 +130,10 @@
         </tbody>
     </table>
 }
+else
+{
+    <p>No flights found</p>
+}
 
 <h2 class="section-heading">Reserve</h2>
 <section id="reserve-section">
@@ -136,11 +159,17 @@
     </div>
     <div class="input-wrapper">
         <label>Name:</label>
-        <input type="text" placeholder="Name" class="form-control" />
+        <input type="text" placeholder="Name" class="form-control" @bind="selectedFlight.Name"/>
     </div>
     <div class="input-wrapper">
         <label>Citizenship:</label>
-        <input type="text" placeholder="Citizenship" class="form-control" />
+        <input type="text" placeholder="Citizenship" class="form-control" @bind="selectedFlight.Citizenship"/>
     </div>
+    <button class="findButton btn" @onclick="Reserve">Reserve</button>
 </section>
+
+@if (reserveResult != "")
+{
+    <p>@reserveResult</p>
+}
 
