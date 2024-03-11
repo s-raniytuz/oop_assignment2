@@ -78,9 +78,24 @@ namespace assignment2
 
         }
 
+        public void cancelReservation(Reservation reservation)
+        {
+            string resFolderPath = Path.Combine(AppContext.BaseDirectory, "res");
+            string filePath = Path.Combine(resFolderPath, "reservations.txt");
+            List<String> rLines = File.ReadAllLines(filePath).ToList();
+            int index = reservations.FindIndex(r => r.ReservationCode == reservation.ReservationCode);
+            if (index > -1)
+            {
+                rLines.RemoveAt(index);
+                File.WriteAllLines(filePath, rLines);
+            }
+
+        }
+
 
         String generateReservationCode()
         {
+
             int dividend = reservations.Count;
             int divisor = 999;
             int remainder = dividend % divisor;

@@ -28,7 +28,7 @@
             await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
 
         }
-       
+
     }
 
     public async void updateReservation(Reservation oldReservation )
@@ -44,6 +44,16 @@
         } catch (Exception e){
             await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
         }
+
+    }
+
+    public async void cancelReservation(Reservation reservation)
+    {
+        ReservationManager rm = new ReservationManager();
+        rm.cancelReservation(reservation);
+        rm.getReservationList();
+        searchList.Clear();
+        await App.Current.MainPage.DisplayAlert("Cancelled Reservation", "You have successfully cancelled this reservation.", "OK");
 
     }
 
@@ -105,6 +115,13 @@ else
                             status = selectedReservation.Status;
                             }">
                             Edit
+                        </button>
+
+                        <button @onclick="() => {
+                            cancelReservation(reservation);
+                            
+                            }">
+                            Cancel
                         </button>
                     </td>
                 </tr>
