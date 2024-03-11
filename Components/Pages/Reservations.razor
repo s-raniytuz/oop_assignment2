@@ -1,7 +1,166 @@
 ﻿@page "/reservations"
+@using System.Diagnostics
 
 <h3>Reservations</h3>
 
 @code {
 
+    ReservationManager rm = new ReservationManager();
+    String reservationCode = "";
+    String airline = "";
+    String name = "";
+    String citizenship = "";
+    String status = "Active";
+    public static List<Reservation> searchList = new List<Reservation>();
+    Reservation? selectedReservation;
+
+    public async void Search()
+    {
+
+        try
+        {
+            ReservationManager _rm = new ReservationManager();
+            searchList = _rm.findReservation(reservationCode, airline, name);
+        }
+        catch (Exception e)
+        {
+            await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
+
+        }
+        //     selectedReservation = null;
+    }
+
+    public async void updateReservation(Reservation oldReservation )
+    {
+        try
+        {
+            Trace.WriteLine(status);
+            Reservation newReservation = new Reservation(oldReservation.ReservationCode, oldReservation.Flight, name!, citizenship!, status!);
+            Trace.WriteLine(newReservation.toString());
+            rm.updateReservation(newReservation);
+            await App.Current.MainPage.DisplayAlert("Updated Reservation", "You have successfully updated this reservation.", "OK");
+
+        } catch (Exception e){
+            await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
+        }
+
+    }
+
+}
+
+<h2 class="section-heading">Reservation finder</h2>
+<section id="search-section">
+    <div class="input-wrapper">
+        <label>Code:</label>
+        <input type="text" placeholder="Any" class="form-control" @bind="reservationCode" />
+    </div>
+
+    <div class="input-wrapper">
+        <label>Airline:</label>
+        <input type="text" placeholder="Any" class="form-control" @bind="airline" />
+    </div>
+
+    <div class="input-wrapper">
+        <label>Name:</label>
+        <input type="text" placeholder="Any" class="form-control" @bind="name" />
+    </div>
+
+    <button class="findButton btn" @onclick="Search">Find reservations</button>
+</section>
+
+
+<h2 class="section-heading">Reservations</h2>
+@if (searchList.Count == 0){
+    <p>No reservations found.</p>
+}
+else
+{
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Reservation Code</th>
+                <th>Flight Code</th>
+                <th>Name</th>
+                <th>Citizenship</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Reservation reservation in searchList)
+            {
+                <tr>
+                    <td>@reservation.ReservationCode</td>
+                    <td>@reservation.Flight.FlightNumber</td>
+                    <td>@reservation.Name</td>
+                    <td>@reservation.Citizenship</td>
+                    <td>@reservation.Status</td>
+                    <td>
+                        <button @onclick="() => { 
+
+                            selectedReservation = reservation;
+                            citizenship = selectedReservation.Citizenship;
+                            status = selectedReservation.Status;
+                            }">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}
+@if (selectedReservation != null)
+{
+
+
+    <h2 class="section-heading">Reserve</h2>
+    <section id="reserve-section">
+        <div class="input-wrapper">
+            <label>Reservation code:</label>
+            <input type="text" placeholder="Flight number" class="form-control" value="@selectedReservation?.ReservationCode" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Flight code:</label>
+            <input type="text" placeholder="Flight number" class="form-control" value="@selectedReservation?.Flight?.FlightNumber" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Airline:</label>
+            <input type="text" placeholder="Airline" class="form-control" value="@selectedReservation?.Flight?.Airline" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Day:</label>
+            <input type="text" placeholder="Day" class="form-control" value="@selectedReservation?.Flight?.DayOfTheWeek" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Time:</label>
+            <input type="text" placeholder="Time" class="form-control" value="@selectedReservation?.Flight?.Time" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Cost:</label>
+            <input type="text" class="form-control" value="@selectedReservation?.Flight?.Cost" readonly />
+        </div>
+        <div class="input-wrapper">
+            <label>Name:</label>
+            <input type="text" placeholder="Name" class="form-control" @bind="@name" />
+            
+        </div>
+        <div class="input-wrapper">
+            <label>Citizenship:</label>
+            <input type="text" placeholder="Citizenship" class="form-control" @bind="@citizenship" />
+        </div>
+        <div class="input-wrapper">
+            <label>Status:</label>
+            <select class="form-select" @bind="@status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+
+        <button class="findButton btn" @onclick="()=>   
+            updateReservation(selectedReservation)">Update</button>
+
+    </section>
 }

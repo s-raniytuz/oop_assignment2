@@ -1,6 +1,8 @@
 ﻿@page "/flights"
+@using System.Diagnostics
 
 @code {
+    FlightManagement fm = new FlightManagement();
     static List<Flight> flightList = FlightManagement.getFlightList();
     HashSet<String> departures = FlightManagement.fillDepartures(flightList);
     HashSet<String> arrivals = FlightManagement.fillArrivals(flightList);
@@ -25,42 +27,34 @@
         }
     }
 
-    static SelectedFlight selectedFlight = new SelectedFlight();
+    Flight? selectedFlight;
+    String? name;
+    String? citizenship;
+    bool active = true;
 
-    public static void SelectFlight(string flightNumber, string departure, string arrival, string day)
-    {
-        foreach (Flight flight in flightList)
+        public async void Reserve()
         {
-            if (flight.FlightNumber == flightNumber && flight.DepartureAirport == departure && flight.ArrivalAirport == arrival && flight.DayOfTheWeek == day)
+        try
+        {
+            if (name == null || citizenship == null || selectedFlight == null)
             {
-                selectedFlight.FlightNumber = flight.FlightNumber;
-                selectedFlight.Airline = flight.Airline;
-                selectedFlight.Day = flight.DayOfTheWeek;
-                selectedFlight.Time = flight.Time;
-                selectedFlight.Cost = flight.Cost;
+                await App.Current.MainPage.DisplayAlert("Error", "Please complete all of the fields", "OK");
+            }else
+            {
+                ReservationManager rm = new ReservationManager();
+                rm.makeReservation(selectedFlight!, name!, citizenship!);
+                await App.Current.MainPage.DisplayAlert("Reserved", "You have successfully reserved this flight.", "OK");
             }
+
+        } catch (Exception e)
+        {
+            await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
+
         }
+
     }
 
-    public static void Reserve()
-    {
-        if (selectedFlight.FlightNumber != "")
-        {
-            try
-            {
-                selectedFlight.reserveFlight();
-                reserveResult = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
-            }
-            catch
-            {
-                reserveResult = "Error";
-            }
-        }
-        else
-        {
-            reserveResult = "Reserve Error";
-        }
-    }
+    public void SelectFlight(Flight flight) => selectedFlight = flight;
 }
 
 <h2 class="section-heading">Flight finder</h2>
@@ -109,23 +103,24 @@
                 <th>Arrival</th>
                 <th>Day</th>
                 <th>Time</th>
-                <th>Idk</th>
+                <th>Capacity</th>
                 <th>Cost</th>
             </tr>
         </thead>
         <tbody>
             @foreach (Flight flight in searchList)
             {
-                <tr @onclick="@(e => SelectFlight(flight.FlightNumber ,flight.DepartureAirport, flight.ArrivalAirport, flight.DayOfTheWeek))">
+                <tr @onclick="() => SelectFlight(flight)">
                     <td>@flight.FlightNumber</td>
                     <td>@flight.Airline</td>
                     <td>@flight.DepartureAirport</td>
                     <td>@flight.ArrivalAirport</td>
                     <td>@flight.DayOfTheWeek</td>
                     <td>@flight.Time</td>
-                    <td>@flight.Idk</td>
+                    <td>@flight.Capacity</td>
                     <td>@flight.Cost</td>
                 </tr>
+
             }
         </tbody>
     </table>
@@ -135,35 +130,36 @@ else
     <p>No flights found</p>
 }
 
+
 <h2 class="section-heading">Reserve</h2>
 <section id="reserve-section">
     <div class="input-wrapper">
         <label>Flight number:</label>
-        <input type="text" placeholder="Flight number" class="form-control" value="@selectedFlight.FlightNumber" readonly/>
+        <input type="text" placeholder="Flight number" class="form-control" value="@selectedFlight?.FlightNumber" readonly/>
     </div>
     <div class="input-wrapper">
         <label>Airline:</label>
-        <input type="text" placeholder="Airline" class="form-control" value="@selectedFlight.Airline" readonly/>
+        <input type="text" placeholder="Airline" class="form-control" value="@selectedFlight?.Airline" readonly/>
     </div>
     <div class="input-wrapper">
         <label>Day:</label>
-        <input type="text" placeholder="Day" class="form-control" value="@selectedFlight.Day" readonly/>
+        <input type="text" placeholder="Day" class="form-control" value="@selectedFlight?.DayOfTheWeek" readonly/>
     </div>
     <div class="input-wrapper">
         <label>Time:</label>
-        <input type="text" placeholder="Time" class="form-control" value="@selectedFlight.Time" readonly/>
+        <input type="text" placeholder="Time" class="form-control" value="@selectedFlight?.Time" readonly/>
     </div>
     <div class="input-wrapper">
         <label>Cost:</label>
-        <input type="text" class="form-control" value="@selectedFlight.Cost" readonly/>
+        <input type="text" class="form-control" value="@selectedFlight?.Cost" readonly/>
     </div>
     <div class="input-wrapper">
         <label>Name:</label>
-        <input type="text" placeholder="Name" class="form-control" @bind="selectedFlight.Name"/>
+        <input type="text" placeholder="Name" class="form-control" @bind="name"/>
     </div>
     <div class="input-wrapper">
         <label>Citizenship:</label>
-        <input type="text" placeholder="Citizenship" class="form-control" @bind="selectedFlight.Citizenship"/>
+        <input type="text" placeholder="Citizenship" class="form-control" @bind="citizenship"/>
     </div>
     <button class="findButton btn" @onclick="Reserve">Reserve</button>
 </section>

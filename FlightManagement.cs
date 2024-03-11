@@ -8,8 +8,13 @@ using System.IO;
 
 namespace assignment2
 {
-    internal abstract class FlightManagement
+    public class FlightManagement
     {
+        public FlightManagement()
+        {
+            getFlightList();
+        }
+        public static List<Flight> allFlights = [];
         public static List<Flight> getFlightList()
         {
             string resDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
@@ -17,16 +22,26 @@ namespace assignment2
             string filepath = Path.Combine(resDirectory, filename);
             string[] content = File.ReadAllLines(filepath);
 
-            List<Flight> flights = new List<Flight>();
-
+            allFlights.Clear();
             foreach (string line in content)
             {
                 string[] lineSplit = line.Split(',');
                 Flight flight = new Flight(lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4], lineSplit[5], Int32.Parse(lineSplit[6]), Double.Parse(lineSplit[7]));
-                flights.Add(flight);
+                allFlights.Add(flight);
             }
 
-            return flights;
+
+            return allFlights;
+        }
+
+        public static Flight? getFlightByFlightCode(String code)
+        {
+            foreach (Flight flight in allFlights)
+            {
+                if(flight.FlightNumber == code)
+                { return flight; }
+            }
+            return null;
         }
 
         public static HashSet<string> fillDepartures(List<Flight> flightList)
@@ -52,19 +67,11 @@ namespace assignment2
 
             return arrivals;
         }
-        public static List<Flight> FindFlights(List<Flight> flights, string departureAirport, string arrivalAirport, string day)
+        public static List<Flight> FindFlights(string departureAirport, string arrivalAirport, string day)
         {
-            List<Flight> searchList = new List<Flight>();
+           getFlightList();
+           return allFlights.Where((e)=> e.DayOfTheWeek == day && e.DepartureAirport == departureAirport && e.ArrivalAirport == arrivalAirport).ToList();
 
-            foreach (Flight flight in flights)
-            {
-                if (flight.DepartureAirport == departureAirport && flight.ArrivalAirport == arrivalAirport && flight.DayOfTheWeek == day)
-                {
-                    searchList.Add(flight);
-                }
-            }
-
-            return searchList;
         }
 
     }

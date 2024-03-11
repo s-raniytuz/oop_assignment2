@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace assignment2
 {
-    internal class Flight
+    public class Flight
     {
         public string FlightNumber { get; set; }
         public string Airline { get; set; }
@@ -15,10 +15,10 @@ namespace assignment2
         public string DayOfTheWeek { get; set; }
         public string Time { get; set; }
 
-        public int Idk { get; set; }
+        public int Capacity { get; set; }
         public double Cost { get; set; }
 
-        public Flight(string flightNumber, string airline, string departureAirport, string arrivalAirport, string day, string time, int idk, double cost)
+        public Flight(string flightNumber, string airline, string departureAirport, string arrivalAirport, string day, string time, int capacity, double cost)
         {
             FlightNumber = flightNumber;
             Airline = airline;
@@ -26,13 +26,13 @@ namespace assignment2
             ArrivalAirport = arrivalAirport;
             DayOfTheWeek = day;
             Time = time;
-            Idk = idk;
+            Capacity = capacity;
             Cost = cost;
         }
 
         public string toString()
         {
-            return $"Flight number: {FlightNumber}\nAirline: {Airline}\nDeparture Airport: {DepartureAirport}\nArrival Airport: {ArrivalAirport}\nDay: {DayOfTheWeek}\nTime: {Time}\nIdk: {Idk}\nCost: {Cost}\n";
+            return $"Flight number: {FlightNumber}\nAirline: {Airline}\nDeparture Airport: {DepartureAirport}\nArrival Airport: {ArrivalAirport}\nDay: {DayOfTheWeek}\nTime: {Time}\nCapacity: {Capacity}\nCost: {Cost}\n";
         }
     }
 }
