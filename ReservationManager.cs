@@ -103,7 +103,7 @@ namespace assignment2
                 number = FormatNumber(lastReservationCodeInt + 1);
             }
 
-            int dividend = reservations.Count;
+            int dividend = int.Parse(lastReservationCode ?? "0");
             int divisor = 999;
             int quotient = (dividend / divisor) +1;
 
