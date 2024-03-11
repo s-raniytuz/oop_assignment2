@@ -19,6 +19,7 @@
 
         try
         {
+            selectedReservation = null;
             ReservationManager _rm = new ReservationManager();
             searchList = _rm.findReservation(reservationCode, airline, name);
         }
@@ -27,7 +28,7 @@
             await App.Current.MainPage.DisplayAlert("Error", e.Message, "OK");
 
         }
-        //     selectedReservation = null;
+       
     }
 
     public async void updateReservation(Reservation oldReservation )
