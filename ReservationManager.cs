@@ -95,13 +95,18 @@ namespace assignment2
 
         String generateReservationCode()
         {
+            String? lastReservationCode = reservations.Last().ReservationCode;
+            String number = FormatNumber(0);
+            if (lastReservationCode != null)
+            {
+                int lastReservationCodeInt = int.Parse(lastReservationCode.Substring(1));
+                number = FormatNumber(lastReservationCodeInt + 1);
+            }
 
             int dividend = reservations.Count;
             int divisor = 999;
-            int remainder = dividend % divisor;
             int quotient = (dividend / divisor) +1;
 
-            String number = FormatNumber(remainder);
             Char letter = GetLetterInAlphabet(quotient);
 
             return $"{letter}{number}";
